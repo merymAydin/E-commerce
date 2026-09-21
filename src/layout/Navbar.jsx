@@ -1,7 +1,34 @@
 import { ChevronDown, Heart, Menu, Search, ShoppingCart, User2Icon } from "lucide-react"
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux"
+import { fetchCategories } from "../store/actions/clientActions";
+import { Link } from "react-router-dom";
+
 
 
 function Navbar() {
+    const dispatch = useDispatch();
+    const categories = useSelector((state) => state.categories);
+    const womenCategories = categories.filter(c => c.gender === "k");
+    const menCategories = categories.filter(c => c.gender === "e");
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        dispatch(fetchCategories());
+
+    }, [dispatch]);
+
+    const createSlug = (title) => {
+        return title
+            .toLowerCase()
+            .replaceAll("ı", "i")
+            .replaceAll("ş", "s")
+            .replaceAll("ğ", "g")
+            .replaceAll("ü", "u")
+            .replaceAll("ö", "o")
+            .replaceAll("ç", "c");
+    };
+
     return (
         <>
 
@@ -14,7 +41,53 @@ function Navbar() {
                 <div className="flex items-center gap-6 ml-20">
 
                     <a>Home</a>
-                    <a>Shop</a><ChevronDown />
+                    <div className="relative">
+    <div
+        className="flex items-center gap-1 cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+    >
+        <a>Shop</a>
+        <ChevronDown size={16} />
+    </div>
+
+                        {isOpen && (
+                            <div className="absolute z-50 bg-white w-[330px] h-[350px] top-10 left-[-40px] px-10 py-6 flex gap-16">
+
+                                <div className="flex flex-col gap-4">
+                                    <h3 className="text-sm font-bold text-[#252B42]">
+                                        Kadın
+                                    </h3>
+
+                                    {womenCategories.map((c) => (
+                                        <Link
+                                            key={c.id}
+                                            to={`/shop/kadin/${createSlug(c.title)}/${c.id}`}
+                                            className="text-sm font-bold text-[#737373]"
+                                        >
+                                            {c.title}
+                                        </Link>
+                                    ))}
+                                </div>
+
+                                <div className="flex flex-col gap-4">
+                                    <h3 className="text-sm font-bold text-[#252B42]">
+                                        Erkek
+                                    </h3>
+
+                                    {menCategories.map((c) => (
+                                        <Link
+                                            key={c.id}
+                                            to={`/shop/erkek/${createSlug(c.title)}/${c.id}`}
+                                            className="text-sm font-bold text-[#737373]"
+                                        >
+                                            {c.title}
+                                        </Link>
+                                    ))}
+                                </div>
+
+                            </div>
+                        )}
+                    </div>
                     <a>About</a>
                     <a>Contact</a>
                     <a>Pages</a>

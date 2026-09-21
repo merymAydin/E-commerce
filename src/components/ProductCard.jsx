@@ -1,9 +1,17 @@
+import { Link } from "react-router-dom/cjs/react-router-dom.min"
 
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({  product, gender, categoryName, categoryId }) => {
+
+  const productNameSlug = product.name
+  .toLowerCase()
+  .replaceAll(" ", "-");
   return (
 
-    <div className="flex flex-col  w-[239px]">
+    <Link
+  to={`/shop/${gender}/${categoryName}/${categoryId}/${productNameSlug}/${product.id}`}
+>
+    <div className="cursor-pointer hover:shadow-md flex flex-col w-[239px]">
        <img
         className="w-[239px] h-[427px] object-cover"
         src={product.images[0].url}
@@ -18,7 +26,7 @@ const ProductCard = ({ product }) => {
         <div className="w-4 h-4 rounded-full bg-[#252B42]"></div>
       </div>
     </div>
-
+</Link>
   )
 }
 

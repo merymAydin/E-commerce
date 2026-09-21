@@ -25,10 +25,10 @@ const NavbarDark = () => {
 
           <div className="flex items-center gap-4 text-white font-bold">
             <p>Follow Us:</p>
-            <i class="fa-brands fa-instagram"></i>
-            <i class="fa-brands fa-youtube"></i>
-            <i class="fa-brands fa-square-facebook"></i>
-            <i class="fa-brands fa-square-twitter"></i>
+            <i className="fa-brands fa-instagram"></i>
+            <i className="fa-brands fa-youtube"></i>
+            <i className="fa-brands fa-square-facebook"></i>
+            <i className="fa-brands fa-square-twitter"></i>
           </div>
         </div>
       </div>

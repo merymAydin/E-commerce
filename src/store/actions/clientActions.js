@@ -27,3 +27,25 @@ export const loginUser = (credentials, rememberMe) => {
 
   };
 };
+
+
+export const fetchCategories = () =>{
+  return async(dispatch) =>{
+    try {
+      const response = await api.get("/categories");
+      dispatch({
+        type: "SET_CATEGORIES",
+        payload: response.data,
+      });
+      return response.data;
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to fetch categories. Please try again."
+      );
+      console.log(error);
+      return null;
+    }
+  }
+}
+
+

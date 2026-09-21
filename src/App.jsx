@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import PageContent from "./layout/PageContent";
 import Footer from "./layout/Footer";
 import ShopPage from "./pages/ShopPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
 
 
 
@@ -32,6 +33,10 @@ function App() {
           </Route>
           <Route exact path="/">
             <HomePage />
+          </Route>
+          
+          <Route path="/shop/:gender/:categoryName/:categoryId/:productNameSlug/:productId">
+          <ProductDetailPage/>
           </Route>
           <Route path="/shop/:gender/:categoryName/:categoryId" >
             <ShopPage />
