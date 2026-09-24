@@ -1,21 +1,33 @@
-import { ChevronDown, Heart, Menu, Search, ShoppingCart, User2Icon } from "lucide-react"
+import {
+    ChevronDown,
+    Heart,
+    Menu,
+    Search,
+    ShoppingCart,
+    User2Icon
+} from "lucide-react";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux"
-import { fetchCategories } from "../store/actions/clientActions";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "../store/actions/productActions";
 import { Link } from "react-router-dom";
-
-
 
 function Navbar() {
     const dispatch = useDispatch();
-    const categories = useSelector((state) => state.categories);
-    const womenCategories = categories.filter(c => c.gender === "k");
-    const menCategories = categories.filter(c => c.gender === "e");
+
+    const categories = useSelector((state) => state.product.categories);
+
+    const womenCategories = categories.filter(
+        (c) => c.gender === "k"
+    );
+
+    const menCategories = categories.filter(
+        (c) => c.gender === "e"
+    );
+
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         dispatch(fetchCategories());
-
     }, [dispatch]);
 
     const createSlug = (title) => {
@@ -41,14 +53,15 @@ function Navbar() {
                 <div className="flex items-center gap-6 ml-20">
 
                     <a>Home</a>
+
                     <div className="relative">
-    <div
-        className="flex items-center gap-1 cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
-    >
-        <a>Shop</a>
-        <ChevronDown size={16} />
-    </div>
+                        <div
+                            className="flex items-center gap-1 cursor-pointer"
+                            onClick={() => setIsOpen(!isOpen)}
+                        >
+                            <a>Shop</a>
+                            <ChevronDown size={16} />
+                        </div>
 
                         {isOpen && (
                             <div className="absolute z-50 bg-white w-[330px] h-[350px] top-10 left-[-40px] px-10 py-6 flex gap-16">
@@ -88,13 +101,14 @@ function Navbar() {
                             </div>
                         )}
                     </div>
+
                     <a>About</a>
                     <a>Contact</a>
                     <a>Pages</a>
                 </div>
 
-
                 <div className="flex items-center gap-5 text-cyan-500 right-[10%] px-10 ml-auto">
+
                     <div className="flex items-center gap-1 font-bold">
                         <User2Icon />
                         <a href="#">login</a>
@@ -105,13 +119,14 @@ function Navbar() {
                     <Search />
                     <ShoppingCart />
                     <Heart />
-                </div>
 
+                </div>
             </div>
 
 
 
-            <div className="flex md:hidden flex-col items-center px-6 h-[460px]">
+            <div className="flex md:hidden flex-col px-6 h-[600px]">
+
 
                 <div className="w-full flex items-center justify-between pt-6">
 
@@ -119,30 +134,63 @@ function Navbar() {
                         Bandage
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <Menu />
+                </div>
+
+
+
+                <div className="mt-12 flex flex-col items-center gap-6">
+
+                    <a className="text-2xl text-[#737373]">
+                        Home
+                    </a>
+
+                    <a className="text-2xl text-[#737373]">
+                        Shop
+                    </a>
+
+                    <a className="text-2xl text-[#737373]">
+                        About
+                    </a>
+
+                    <a className="text-2xl text-[#737373]">
+                        Blog
+                    </a>
+
+                    <a className="text-2xl text-[#737373]">
+                        Contact
+                    </a>
+
+                    <a className="text-2xl text-[#737373]">
+                        Pages
+                    </a>
+
+
+
+                    <div className="flex items-center gap-2 text-[#23A6F0] font-bold text-lg mt-2">
+                        <User2Icon size={20} />
+                        <span>
+                            Login / Register
+                        </span>
+                    </div>
+
+
+
+                    <div className="flex flex-col items-center gap-5 text-[#23A6F0] mt-1">
+
                         <Search />
+
                         <ShoppingCart />
-                        <Menu />
+
+                        <Heart />
+
                     </div>
 
                 </div>
 
-
-                <div className="mt-16 flex flex-col items-center justify-between gap-8">
-                    <a className="text-2xl text-[#737373]">Home</a>
-                    <a className="text-2xl text-[#737373]">Product</a>
-                    <a className="text-2xl text-[#737373]">Pricing</a>
-                    <a className="text-2xl text-[#737373]">Contact</a>
-                </div>
-
-
             </div>
-
-
-
-
         </>
-    )
+    );
 }
 
-export default Navbar
+export default Navbar;

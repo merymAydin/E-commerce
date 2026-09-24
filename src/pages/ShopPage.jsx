@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { api } from "../api/axiosInstance";
 import ProductCard from "../components/ProductCard";
 import { Link, useParams } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -9,49 +8,45 @@ import s3 from "../assets/s3.png";
 import s4 from "../assets/s4.png";
 import s5 from "../assets/s5.png";
 import BrandLogos from "../components/BrandLogos";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../store/actions/productActions";
 
 const ShopPage = () => {
-  const [products, setProducts] = useState([]);
-  const [viewMode, setViewMode] = useState("grid");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [sort, setSort] = useState("");
-  const [selectedSort, setSelectedSort] = useState("");
-  const [filter, setFilter] = useState("");
+const [viewMode, setViewMode] = useState("grid");
+const [currentPage, setCurrentPage] = useState(1);
+const [loading, setLoading] = useState(false);
+const [sort, setSort] = useState("");
+const [selectedSort, setSelectedSort] = useState("");
+const [filter, setFilter] = useState("");
+
+const { gender, categoryName, categoryId } = useParams();
+
+const dispatch = useDispatch();
+
+const products = useSelector((state) => state.product.products);
+console.log("PRODUCTS:", products);
+const total = useSelector((state) => state.product.total);
+
+const totalPages = Math.ceil(total / 12);
 
 
+useEffect(() => {
+  async function loadProducts() {
+    setLoading(true);
 
-  const totalPages = Math.ceil(total / 12);
-  const { gender,categoryName,categoryId } = useParams();
+    await dispatch(fetchProducts({
+      limit: 12,
+      offset: (currentPage - 1) * 12,
+      category: categoryId || null,
+      sort: sort || undefined,
+      filter: filter || undefined,
+    }));
 
-  useEffect(() => {
+    setLoading(false);
+  }
 
-    async function fetchProducts() {
-      setLoading(true);
-
-      try {
-        const response = await api.get("/products", {
-          params: {
-            limit: 12,
-            offset: (currentPage - 1) * 12,
-            category: categoryId || null,
-            sort: sort || undefined,
-            filter: filter || undefined,
-          },
-        });
-
-        setProducts(response.data.products);
-        setTotal(response.data.total);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchProducts();
-  }, [currentPage, categoryId, sort, filter]);
+  loadProducts();
+}, [currentPage, categoryId, sort, filter]);
 
 
   return (
@@ -356,8 +351,8 @@ const ShopPage = () => {
           <button
             className="w-[80px] h-10 bg-[#23A6F0] rounded-md text-white text-sm font-bold"
             onClick={() => {
-setCurrentPage(1);
-setSort(selectedSort);
+              setCurrentPage(1);
+              setSort(selectedSort);
             }}
           >
             Filter
@@ -510,8 +505,8 @@ setSort(selectedSort);
             key={pageNumber}
             onClick={() => setCurrentPage(pageNumber)}
             className={`w-[60px] h-[62px] border-t border-b border-[#E8E8E8] ${currentPage === pageNumber
-                ? "bg-[#23A6F0] text-white border-[#23A6F0]"
-                : "text-[#23A6F0]"
+              ? "bg-[#23A6F0] text-white border-[#23A6F0]"
+              : "text-[#23A6F0]"
               }`}
           >
             {pageNumber}
@@ -568,7 +563,7 @@ setSort(selectedSort);
 
       </div>
 
-      <BrandLogos/>
+      <BrandLogos />
 
     </>
   );

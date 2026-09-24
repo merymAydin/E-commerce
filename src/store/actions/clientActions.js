@@ -1,19 +1,14 @@
-
 import { api } from "../../api/axiosInstance";
 import { toast } from "react-toastify";
 
 
 
 export const loginUser = (credentials, rememberMe) => {
-
-
   return async (dispatch) => {
     try {
       const response = await api.post("/login", credentials);
-      dispatch({
-        type: "SET_USER",
-        payload: response.data,
-      });
+      dispatch(setUser(response.data));
+      
       if (rememberMe) {
         localStorage.setItem("token", response.data.token);
       }
@@ -29,23 +24,57 @@ export const loginUser = (credentials, rememberMe) => {
 };
 
 
-export const fetchCategories = () =>{
-  return async(dispatch) =>{
+
+
+export const setUser = (user) => ({
+  type: "SET_USER",
+  payload: user,
+});
+
+export const setAddress = (address) => ({
+  type: "SET_ADDRESS",
+  payload: address,
+});
+
+export const setCreditCards = (creditCards) => ({
+  type: "SET_CREDITCARDS",
+  payload: creditCards,
+});
+
+export const setRoles = (roles) => ({
+  type: "SET_ROLES",
+  payload: roles,
+});
+
+export const setTheme = (theme) => ({
+  type: "SET_THEME",
+  payload: theme,
+});
+
+export const setLanguage = (language) => ({
+  type: "SET_LANGUAGE",
+  payload: language,
+});
+
+
+export const fetchRoles = () => {
+  return async (dispatch) => {
     try {
-      const response = await api.get("/categories");
+      const response = await api.get("/roles");
+
       dispatch({
-        type: "SET_CATEGORIES",
+        type: "SET_ROLES",
         payload: response.data,
       });
+
       return response.data;
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Failed to fetch categories. Please try again."
+        error.response?.data?.message ||
+          "Failed to fetch roles. Please try again."
       );
       console.log(error);
       return null;
     }
-  }
-}
-
-
+  };
+};

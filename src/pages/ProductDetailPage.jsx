@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { fetchProduct } from "../store/actions/productActions";
+import { setCart } from "../store/actions/shoppingCartActions";
 import {
   ChevronRight,
   Eye,
@@ -22,13 +23,17 @@ const ProductDetailPage = () => {
   const { productId } = useParams();
 
   const product = useSelector((state) => state.product.product);
-  const categories = useSelector((state) => state.categories);
+  const categories = useSelector((state) => state.product.categories);
 
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [products, setProducts] = useState([]);
+
+  const cart = useSelector((state) => state.shoppingCart.cart);
+
+  const existingItem = cart.find(item => item.product.id === product.id);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -63,9 +68,42 @@ const ProductDetailPage = () => {
     fetchSellerProducts();
   }, []);
 
+const handleAddToCart = () => {
+  const newCart = cart.map((item) => {
+    if (item.product.id === product.id) {
+      return {
+        ...item,
+        count: item.count + 1,
+      };
+    }
+
+    return item;
+  });
+
+  let updatedCart;
+
+  if (!existingItem) {
+    const newItem = {
+      count: 1,
+      checked: true,
+      product: product,
+    };
+
+    updatedCart = [
+      ...newCart,
+      newItem,
+    ];
+  } else {
+    updatedCart = newCart;
+  }
+
+  dispatch(setCart(updatedCart));
+};
+
+
   return (
     <>
-       
+
       <div className="max-w-[1050px] mx-auto px-4 md:px-0 flex items-center gap-2 py-6 text-sm">
         <Link to="/" className="font-bold">
           Home
@@ -78,9 +116,9 @@ const ProductDetailPage = () => {
         </Link>
       </div>
 
-       
+
       <div className="max-w-[1050px] mx-auto px-4 md:px-0 flex flex-col md:flex-row gap-12 md:gap-10 mb-12">
-         
+
         <div className="w-full md:w-1/2">
           {loading ? (
             <LoaderCircle />
@@ -131,7 +169,7 @@ const ProductDetailPage = () => {
           )}
         </div>
 
-         
+
         <div className="w-full md:w-1/2">
           {loading ? (
             <LoaderCircle />
@@ -141,7 +179,7 @@ const ProductDetailPage = () => {
                 {product?.name}
               </h2>
 
-               
+
               <div className="flex items-center gap-2 mt-3">
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -174,12 +212,12 @@ const ProductDetailPage = () => {
                 </span>
               </div>
 
-               
+
               <p className="text-2xl font-bold mt-4">
                 ${product?.price}
               </p>
 
-               
+
               <p className="mt-2 text-[#737373] font-bold">
                 Availability :{" "}
                 <span className="text-[#23A6F0]">
@@ -193,9 +231,9 @@ const ProductDetailPage = () => {
 
               <hr className="my-6" />
 
-               
+
               <div className="flex items-center gap-2 mt-6">
-               <button className="bg-[#23A6F0] text-white font-bold px-4 py-2 rounded text-xs">
+                <button className="bg-[#23A6F0] text-white font-bold px-4 py-2 rounded text-xs">
                   Select Options
                 </button>
 
@@ -204,7 +242,7 @@ const ProductDetailPage = () => {
                 </div>
 
                 <div className="w-8 h-8 rounded-full border border-[#E0E0E0] flex items-center justify-center">
-                  <ShoppingCart size={20} />
+                  <ShoppingCart size={20} onClick={handleAddToCart} />
                 </div>
 
                 <div className="w-8 h-8 rounded-full border border-[#E0E0E0] flex items-center justify-center">
@@ -216,9 +254,9 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-       
+
       <section className="max-w-[1050px] mx-auto px-4 md:px-0 mt-16">
-        
+
         <div className="flex justify-center gap-4 md:gap-16 py-4 border-b border-[#E0E0E0] text-xs md:text-sm">
           <button className="font-semibold text-[#252B42]">
             Description
@@ -236,9 +274,9 @@ const ProductDetailPage = () => {
           </button>
         </div>
 
-         
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12">
-           
+
           <div className="flex justify-center md:block">
             <div className="w-[165px] h-[140px] md:w-[316px] md:h-[372px] shadow-[6px_8px_0px_#F2F2F2]">
               <img
@@ -249,7 +287,7 @@ const ProductDetailPage = () => {
             </div>
           </div>
 
-           
+
           <div>
             <h3 className="text-2xl font-bold text-[#252B42] mb-6">
               the quick fox jumps over
@@ -262,7 +300,7 @@ const ProductDetailPage = () => {
             </p>
           </div>
 
-           
+
           <div>
             <h3 className="text-2xl font-bold text-[#252B42] mb-6">
               the quick fox jumps over
@@ -310,40 +348,40 @@ const ProductDetailPage = () => {
         </div>
       </section>
 
-<section className="bg-[#FAFAFA] mt-16 py-6">
-  <div className="max-w-[1050px] mx-auto">
-    <h2 className="text-2xl font-bold text-[#252B42] pb-4 border-b border-[#E0E0E0]">
-      BESTSELLER PRODUCTS
-    </h2>
+      <section className="bg-[#FAFAFA] mt-16 py-6">
+        <div className="max-w-[1050px] mx-auto px-4 md:px-0">
+          <h2 className="text-2xl font-bold text-[#252B42] pb-4 border-b border-[#E0E0E0]">
+            BESTSELLER PRODUCTS
+          </h2>
 
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      {products
-        .sort((a, b) => b.sell_count - a.sell_count)
-        .slice(0, 8)
-        .map((product) => {
-          const category = categories.find(
-            (category) => category.id === product.category_id
-          );
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 justify-items-center">
+            {products
+              .sort((a, b) => b.sell_count - a.sell_count)
+              .slice(0, 8)
+              .map((product) => {
+                const category = categories.find(
+                  (category) => category.id === product.category_id
+                );
 
-          const gender = category?.code?.startsWith("k")
-            ? "kadin"
-            : "erkek";
+                const gender = category?.code?.startsWith("k")
+                  ? "kadin"
+                  : "erkek";
 
-          return (
-            <ProductCard
-              key={product.id}
-              product={product}
-              gender={gender}
-              categoryId={category?.id}
-              categoryName={category?.title}
-            />
-          );
-        })}
-    </div>
-  </div>
-</section>
+                return (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    gender={gender}
+                    categoryId={category?.id}
+                    categoryName={category?.title}
+                  />
+                );
+              })}
+          </div>
+        </div>
+      </section>
 
-<BrandLogos />
+      <BrandLogos />
     </>
   );
 };

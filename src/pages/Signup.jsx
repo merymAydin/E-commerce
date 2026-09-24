@@ -4,6 +4,8 @@ import { api } from "../api/axiosInstance";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
+import { fetchRoles } from "../store/actions/clientActions";
+import { useDispatch, useSelector } from "react-redux";
 
 const Signup = () => {
   const {
@@ -13,28 +15,31 @@ const Signup = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [roles, setRoles] = useState([]);
+
   const [loading, setLoading] = useState(false);
 
-  const selectedRole_id = watch("role_id");
+  const roles = useSelector(state => state.client.roles);
+
+  const selectedRoleId = watch("role_id");
   const selectedRole = roles.find(
-    (role) => role.id === Number(selectedRole_id),
+    (role) => role.id === Number(selectedRoleId),
   );
   const history = useHistory();
+  const dispatch = useDispatch();
+
+
 
   useEffect(() => {
-    async function fetchRoles() {
-      try {
-        const response = await api.get("/roles");
-        setRoles(response.data);
-        const customer = response.data.find((role) => role.code === "customer");
-        setValue("role_id", customer.id);
-      } catch (error) {
-        console.error("Error fetching roles:", error);
-      }
+    dispatch(fetchRoles());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const customer = roles.find((role)=> role.code === "customer");
+
+    if (customer) {
+      setValue("role_id", customer.id);
     }
-    fetchRoles();
-  }, []);
+  }, [roles, setValue]);
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -173,7 +178,7 @@ const Signup = () => {
       <button type="submit" disabled={loading}>
         {loading ? (
           <>
-            <LoaderCircle className="animate-spin"/>
+            <LoaderCircle className="animate-spin" />
             Signing up...
           </>
         ) : (
