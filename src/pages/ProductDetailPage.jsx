@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
-import { fetchProduct } from "../store/actions/productActions";
+import { fetchProduct, fetchCategories } from "../store/actions/productActions";
 import { setCart } from "../store/actions/shoppingCartActions";
 import {
   ChevronRight,
@@ -40,6 +40,8 @@ const ProductDetailPage = () => {
       try {
         setLoading(true);
         await dispatch(fetchProduct(productId));
+        await dispatch(fetchCategories());
+
       } catch (error) {
         console.error("Error fetching product:", error);
       } finally {
@@ -68,37 +70,37 @@ const ProductDetailPage = () => {
     fetchSellerProducts();
   }, []);
 
-const handleAddToCart = () => {
-  const newCart = cart.map((item) => {
-    if (item.product.id === product.id) {
-      return {
-        ...item,
-        count: item.count + 1,
+  const handleAddToCart = () => {
+    const newCart = cart.map((item) => {
+      if (item.product.id === product.id) {
+        return {
+          ...item,
+          count: item.count + 1,
+        };
+      }
+
+      return item;
+    });
+
+    let updatedCart;
+
+    if (!existingItem) {
+      const newItem = {
+        count: 1,
+        checked: true,
+        product: product,
       };
+
+      updatedCart = [
+        ...newCart,
+        newItem,
+      ];
+    } else {
+      updatedCart = newCart;
     }
 
-    return item;
-  });
-
-  let updatedCart;
-
-  if (!existingItem) {
-    const newItem = {
-      count: 1,
-      checked: true,
-      product: product,
-    };
-
-    updatedCart = [
-      ...newCart,
-      newItem,
-    ];
-  } else {
-    updatedCart = newCart;
-  }
-
-  dispatch(setCart(updatedCart));
-};
+    dispatch(setCart(updatedCart));
+  };
 
 
   return (
@@ -231,24 +233,34 @@ const handleAddToCart = () => {
 
               <hr className="my-6" />
 
-
-              <div className="flex items-center gap-2 mt-6">
-                <button className="bg-[#23A6F0] text-white font-bold px-4 py-2 rounded text-xs">
-                  Select Options
-                </button>
-
-                <div className="w-8 h-8 rounded-full border border-[#E0E0E0] flex items-center justify-center">
-                  <Heart size={20} />
-                </div>
-
-                <div className="w-8 h-8 rounded-full border border-[#E0E0E0] flex items-center justify-center">
-                  <ShoppingCart size={20} onClick={handleAddToCart} />
-                </div>
-
-                <div className="w-8 h-8 rounded-full border border-[#E0E0E0] flex items-center justify-center">
-                  <Eye size={20} />
-                </div>
+              <div className="flex gap-3 mt-6 mb-8">
+                <div className="w-7 h-7 rounded-full bg-[#23A6F0]"></div>
+                <div className="w-7 h-7 rounded-full bg-[#2DC071]"></div>
+                <div className="w-7 h-7 rounded-full bg-[#E77C40]"></div>
+                <div className="w-7 h-7 rounded-full bg-[#252B42]"></div>
               </div>
+
+
+             <div className="flex items-center gap-3 mt-27">
+  <button className="bg-[#23A6F0] text-white font-bold px-5 py-3 rounded text-sm">
+    Select Options
+  </button>
+
+  <button className="w-9 h-9 rounded-full border border-[#E0E0E0] flex items-center justify-center">
+    <Heart size={19} />
+  </button>
+
+  <button
+  onClick={handleAddToCart}
+  className="w-9 h-9 rounded-full border border-[#E0E0E0] flex items-center justify-center"
+>
+  <ShoppingCart size={19} />
+</button>
+
+  <button className="w-9 h-9 rounded-full border border-[#E0E0E0] flex items-center justify-center">
+    <Eye size={19} />
+  </button>
+</div>
             </div>
           )}
         </div>

@@ -46,11 +46,14 @@ const productReducer = (state = initialState, action) => {
         ...state,
         filter: action.payload,
       };
+    case "SET_CATEGORIES":
+      return {
+        ...state,
+        categories: action.payload,
+      };
     default:
       return state;
   }
 };
 
 export default productReducer;
-
-

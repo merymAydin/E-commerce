@@ -1,30 +1,25 @@
 import { api } from "../../api/axiosInstance";
 import { toast } from "react-toastify";
 
-
-
-export const loginUser = (credentials, rememberMe) => {
+export const loginUser = (credentials   ) => {
   return async (dispatch) => {
     try {
       const response = await api.post("/login", credentials);
       dispatch(setUser(response.data));
-      
-      if (rememberMe) {
-        localStorage.setItem("token", response.data.token);
-      }
-      return response.data;
 
+       
+        localStorage.setItem("token", response.data.token);
+      
+      return response.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed. Please try again.");
+      toast.error(
+        error.response?.data?.message || "Login failed. Please try again.",
+      );
       console.log(error);
       return null;
     }
-
   };
 };
-
-
-
 
 export const setUser = (user) => ({
   type: "SET_USER",
@@ -56,7 +51,6 @@ export const setLanguage = (language) => ({
   payload: language,
 });
 
-
 export const fetchRoles = () => {
   return async (dispatch) => {
     try {
@@ -71,10 +65,39 @@ export const fetchRoles = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Failed to fetch roles. Please try again."
+          "Failed to fetch roles. Please try again.",
       );
       console.log(error);
       return null;
     }
   };
 };
+
+export const verifyUser = () => {
+  return async (dispatch) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const response = await api.get("/verify");
+        dispatch(setUser(response.data));
+
+        localStorage.setItem("token", response.data.token);
+        api.defaults.headers.common.Authorization = response.data.token;
+
+        return response.data;
+      } 
+    } catch (error) {
+      localStorage.removeItem("token");
+delete api.defaults.headers.common.Authorization;
+      toast.error(
+        error.response?.data?.message || "Login failed. Please try again.",
+      );
+
+      console.log(error);
+      return null;
+    }
+  };
+};
+
+
+ 

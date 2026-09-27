@@ -15,6 +15,7 @@ function Navbar() {
     const dispatch = useDispatch();
 
     const categories = useSelector((state) => state.product.categories);
+    const cart = useSelector((state) => state.shoppingCart.cart);
 
     const womenCategories = categories.filter(
         (c) => c.gender === "k"
@@ -25,6 +26,8 @@ function Navbar() {
     );
 
     const [isOpen, setIsOpen] = useState(false);
+
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
     useEffect(() => {
         dispatch(fetchCategories());
@@ -40,6 +43,8 @@ function Navbar() {
             .replaceAll("ö", "o")
             .replaceAll("ç", "c");
     };
+
+
 
     return (
         <>
@@ -111,13 +116,69 @@ function Navbar() {
 
                     <div className="flex items-center gap-1 font-bold">
                         <User2Icon />
-                        <a href="#">login</a>
-                        /
-                        <a href="#">Register</a>
+                        <a href="/login">login</a>
+                        <span>/</span>
+                        <a href="/signup">Register</a>
                     </div>
 
                     <Search />
-                    <ShoppingCart />
+                    <div className="relative">
+                        <ShoppingCart onClick={() => setIsCartOpen(!isCartOpen)} />
+
+                        {isCartOpen && (
+                            <div className="absolute right-0 top-8 w-[380px] bg-white shadow-lg z-50">
+                                <div className="p-4">
+                                    <h3 className="text-lg font-bold mb-4 text-black">My Cart ( {cart.length} products ) </h3>
+                                    {cart.length === 0 ? (
+                                        "Your cart is empty"
+                                    ) :
+                                        <ul>
+                                            {cart.map(item =>
+                                            (
+                                                <li
+                                                    key={item.product.id}
+                                                    className="flex gap-4 py-4 border-b"
+                                                >
+                                                    <img
+                                                        src={item.product.images[0].url}
+                                                        alt={item.product.name}
+                                                        className="w-16 h-20 object-cover"
+                                                    />
+
+                                                    <div className="flex flex-col">
+                                                        <span className="font-semibold text-black">
+                                                            {item.product.name}
+                                                        </span>
+
+                                                        <span className="text-sm text-gray-400">
+                                                            Quantity: {item.count}
+                                                        </span>
+
+                                                        <span className="text-orange-400">
+                                                            {item.product.price} TL
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            )
+                                            )}
+                                        </ul>
+                                    }
+                                    <div className="flex gap-3 mt-4">
+                                        <Link
+                                            to="/cart"
+                                            className="flex-1 bg-gray-100 text-black py-2 rounded text-center"
+                                        >
+                                            Go to Cart
+                                        </Link>
+
+                                        <button className="flex-1 bg-orange-500 text-white font-bold py-2 rounded">
+                                            Complete Order
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                     <Heart />
 
                 </div>

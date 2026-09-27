@@ -9,14 +9,37 @@ import PageContent from "./layout/PageContent";
 import Footer from "./layout/Footer";
 import ShopPage from "./pages/ShopPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
-
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { verifyUser } from "./store/actions/clientActions";
+import ShoppingCartPage from "./pages/ShoppingCartPage";
+import ProtectedRoute from "./pages/ProtectedRoute";
+import CreateOrder from "./pages/CreateOrderPage";
+import PreviousOrdersPage from "./pages/PreviousOrdersPage";
 
 
 function App() {
 
+  const dispatch = useDispatch();
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+
+  useEffect(() => {
+    const authCheck = async () => {
+      try {
+        await dispatch(verifyUser());
+
+      } finally {
+        setIsAuthChecking(false);
+      }
+
+    }
+
+    authCheck();
+  }, [dispatch]);
+
   return (
     <>
-      <Header />
+      {!isAuthChecking && <Header />}
       <PageContent>
 
         <Switch>
@@ -34,13 +57,30 @@ function App() {
           <Route exact path="/">
             <HomePage />
           </Route>
-          
+
           <Route path="/shop/:gender/:categoryName/:categoryId/:productNameSlug/:productId">
-          <ProductDetailPage/>
+            <ProductDetailPage />
           </Route>
+
           <Route path="/shop/:gender/:categoryName/:categoryId" >
             <ShopPage />
           </Route>
+
+          <Route path="/cart" >
+            <ShoppingCartPage />
+          </Route>
+
+          <ProtectedRoute
+            path="/create-order"
+            component={CreateOrder}
+          />
+
+          <ProtectedRoute
+            path="/previous-orders"
+            component={PreviousOrdersPage}
+          />
+
+
         </Switch>
       </PageContent>
       <Footer />
