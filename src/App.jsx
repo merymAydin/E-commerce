@@ -16,6 +16,9 @@ import ShoppingCartPage from "./pages/ShoppingCartPage";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import CreateOrder from "./pages/CreateOrderPage";
 import PreviousOrdersPage from "./pages/PreviousOrdersPage";
+import TeamPage from "./pages/TeamPage";
+import About from "./pages/AboutUsPage";
+import ContactPage from "./pages/ContactPage";
 
 
 function App() {
@@ -79,6 +82,18 @@ function App() {
             path="/previous-orders"
             component={PreviousOrdersPage}
           />
+
+          <Route exact path="/team" >
+            <TeamPage />
+          </Route>
+
+          <Route exact path="/aboutus" >
+            <About />
+          </Route>
+
+          <Route exact path="/contact" >
+            <ContactPage />
+          </Route>
 
 
         </Switch>

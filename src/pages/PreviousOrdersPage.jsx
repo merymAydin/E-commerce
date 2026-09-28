@@ -40,7 +40,9 @@ const PreviousOrdersPage = () => {
                             />
                             <span>{product.name}</span>
                             <span>x{product.count}</span>
-                            <span>{product.price} TL</span>
+                            <span className="ml-4 text-[#F58220] font-medium">
+  {product.price} TL
+</span>
                         </div>
                     ))}
                 </div>

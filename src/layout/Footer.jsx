@@ -1,4 +1,5 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -24,7 +25,7 @@ const Footer = () => {
       <div className="flex justify-between gap-5 px-50 pt-10">
         <div className="flex flex-col gap-2">
           <p className="font-bold">Company Info</p>
-            <a href="#" className="text-[#808080]">About Us</a>
+            <Link to='/aboutus' className="text-[#808080]">About Us</Link>
             <a href="#" className="text-[#808080]">Carrier</a>
             <a href="#" className="text-[#808080]">We are hiring</a>
             <a href="#" className="text-[#808080]">Blog</a>
@@ -32,7 +33,8 @@ const Footer = () => {
 
         <div className="flex flex-col gap-2">
           <p className="font-bold">Legal</p>
-            <a href="#" className="text-[#808080]">About Us</a>
+                        <Link to='/aboutus' className="text-[#808080]">About Us</Link>
+
             <a href="#" className="text-[#808080]">Carrier</a>
             <a href="#" className="text-[#808080]">We are hiring</a>
             <a href="#" className="text-[#808080]">Blog</a>
@@ -40,7 +42,8 @@ const Footer = () => {
 
         <div className="flex flex-col gap-2">
           <p className="font-bold">Features</p>
-            <a href="#" className="text-[#808080]">About Us</a>
+                        <Link to='/aboutus' className="text-[#808080]">About Us</Link>
+
             <a href="#" className="text-[#808080]">Carrier</a>
             <a href="#" className="text-[#808080]">We are hiring</a>
             <a href="#" className="text-[#808080]">Blog</a>
@@ -48,7 +51,8 @@ const Footer = () => {
 
         <div className="flex flex-col gap-2">
           <p className="font-bold">Resources</p>
-            <a href="#" className="text-[#808080]">About Us</a>
+                        <Link to='/aboutus' className="text-[#808080]">About Us</Link>
+
             <a href="#" className="text-[#808080]">Carrier</a>
             <a href="#" className="text-[#808080]">We are hiring</a>
             <a href="#" className="text-[#808080]">Blog</a>
@@ -97,7 +101,8 @@ const Footer = () => {
         <div className="flex flex-col gap-12 px-10 mt-10 pb-10">
           <div className="flex flex-col gap-2">
             <p className="font-bold">Company Info</p>
-            <a href="#" className="text-[#808080]">About Us</a>
+                        <Link to='/aboutus' className="text-[#808080]">About Us</Link>
+
             <a href="#" className="text-[#808080]">Carrier</a>
             <a href="#" className="text-[#808080]">We are hiring</a>
             <a href="#" className="text-[#808080]">Blog</a>
@@ -105,7 +110,8 @@ const Footer = () => {
 
           <div className="flex flex-col gap-2">
             <p className="font-bold">Legal</p>
-            <a href="#" className="text-[#808080]">About Us</a>
+                    <Link to='/aboutus' className="text-[#808080]">About Us</Link>
+
             <a href="#" className="text-[#808080]">Carrier</a>
             <a href="#" className="text-[#808080]">We are hiring</a>
             <a href="#" className="text-[#808080]">Blog</a>
@@ -113,7 +119,7 @@ const Footer = () => {
 
           <div className="flex flex-col gap-2">
             <p className="font-bold">Features</p>
-            <a href="#" className="text-[#808080]">About Us</a>
+            <Link to='/aboutus' className="text-[#808080]">About Us</Link>
             <a href="#" className="text-[#808080]">Carrier</a>
             <a href="#" className="text-[#808080]">We are hiring</a>
             <a href="#" className="text-[#808080]">Blog</a>
@@ -121,7 +127,7 @@ const Footer = () => {
 
           <div className="flex flex-col gap-2">
             <p className="font-bold">Resources</p>
-            <a href="#" className="text-[#808080]">About Us</a>
+            <Link to='/aboutus' className="text-[#808080]">About Us</Link>
             <a href="#" className="text-[#808080]">Carrier</a>
             <a href="#" className="text-[#808080]">We are hiring</a>
             <a href="#" className="text-[#808080]">Blog</a>

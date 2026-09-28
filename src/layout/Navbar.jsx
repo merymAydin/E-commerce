@@ -16,6 +16,8 @@ function Navbar() {
 
     const categories = useSelector((state) => state.product.categories);
     const cart = useSelector((state) => state.shoppingCart.cart);
+    const user = useSelector((state) => state.user);
+
 
     const womenCategories = categories.filter(
         (c) => c.gender === "k"
@@ -28,6 +30,8 @@ function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
 
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
 
     useEffect(() => {
         dispatch(fetchCategories());
@@ -107,7 +111,7 @@ function Navbar() {
                         )}
                     </div>
 
-                    <a>About</a>
+                    <Link to="/aboutus">About</Link>
                     <a>Contact</a>
                     <a>Pages</a>
                 </div>
@@ -210,9 +214,12 @@ function Navbar() {
                         Shop
                     </a>
 
-                    <a className="text-2xl text-[#737373]">
-                        About
-                    </a>
+                    <Link
+  className="text-2xl text-[#737373]"
+  to="/aboutus"
+>
+  About
+</Link>
 
                     <a className="text-2xl text-[#737373]">
                         Blog
@@ -228,11 +235,23 @@ function Navbar() {
 
 
 
-                    <div className="flex items-center gap-2 text-[#23A6F0] font-bold text-lg mt-2">
-                        <User2Icon size={20} />
-                        <span>
-                            Login / Register
-                        </span>
+                    <div className="relative">
+                        <div
+                            className="flex items-center gap-1 font-bold cursor-pointer"
+                            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                        >
+                            <User2Icon />
+                            <span>{user.name}</span>
+                            <ChevronDown size={16} />
+                        </div>
+
+                        {isUserMenuOpen && (
+                            <div className="absolute right-0 top-8 z-50 bg-white shadow-lg w-48 p-4">
+                                <Link to="/previous-orders">
+                                    Previous Orders
+                                </Link>
+                            </div>
+                        )}
                     </div>
 
 
