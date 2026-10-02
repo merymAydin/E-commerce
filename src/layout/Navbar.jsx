@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../store/actions/productActions";
 import { Link } from "react-router-dom";
+import Gravatar from "react-gravatar";
 
 function Navbar() {
     const dispatch = useDispatch();
@@ -118,12 +119,36 @@ function Navbar() {
 
                 <div className="flex items-center gap-5 text-cyan-500 right-[10%] px-10 ml-auto">
 
-                    <div className="flex items-center gap-1 font-bold">
-                        <User2Icon />
-                        <a href="/login">login</a>
-                        <span>/</span>
-                        <a href="/signup">Register</a>
-                    </div>
+                    {user ? (
+                        <div className="relative">
+                            <div
+                                className="flex items-center gap-2 cursor-pointer"
+                                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                            >
+                                <Gravatar
+                                    email={user.email}
+                                    size={32}
+                                    className="rounded-full"
+                                />
+                                <span className="font-bold text-sm">{user.name}</span>
+                            </div>
+
+                            {isUserMenuOpen && (
+                                <div className="absolute right-0 top-10 z-50 w-40 bg-white shadow-lg p-4 text-black">
+                                    <Link to="/previous-orders">
+                                        Previous Orders
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-1 font-bold">
+                            <User2Icon />
+                            <Link to="/login">Login</Link>
+                            <span>/</span>
+                            <Link to="/signup">Register</Link>
+                        </div>
+                    )}
 
                     <Search />
                     <div className="relative">
@@ -176,7 +201,9 @@ function Navbar() {
                                         </Link>
 
                                         <button className="flex-1 bg-orange-500 text-white font-bold py-2 rounded">
-                                            Complete Order
+                                            <Link to="/create-order">
+                                                Complete Order
+                                            </Link>
                                         </button>
                                     </div>
                                 </div>
@@ -215,11 +242,11 @@ function Navbar() {
                     </a>
 
                     <Link
-  className="text-2xl text-[#737373]"
-  to="/aboutus"
->
-  About
-</Link>
+                        className="text-2xl text-[#737373]"
+                        to="/aboutus"
+                    >
+                        About
+                    </Link>
 
                     <a className="text-2xl text-[#737373]">
                         Blog
@@ -241,7 +268,11 @@ function Navbar() {
                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                         >
                             <User2Icon />
-                            <span>{user.name}</span>
+                            {user && (
+                                <div className="relative">
+                                    <span>{user.name}</span>
+                                </div>
+                            )}
                             <ChevronDown size={16} />
                         </div>
 

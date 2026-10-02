@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api/axiosInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { setCart } from "../store/actions/shoppingCartActions";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const CreateOrderPage = () => {
   const [addresses, setAddresses] = useState([]);
@@ -31,6 +32,7 @@ const CreateOrderPage = () => {
     expire_year: "",
     name_on_card: "",
   });
+  const [orderCompleted, setOrderCompleted] = useState(false);
 
   const total = cart
     .filter((item) => item.checked)
@@ -39,6 +41,8 @@ const CreateOrderPage = () => {
     }, 0);
 
     const dispatch = useDispatch();
+
+  const history = useHistory();
 
   const handleChange = (e) => {
     setFormData({
@@ -99,6 +103,7 @@ const CreateOrderPage = () => {
         );
 
         setEditingAddress(null);
+         
       } else {
         const response = await api.post("/user/address", formData);
         setAddresses([...addresses, response.data]);
@@ -235,6 +240,7 @@ const CreateOrderPage = () => {
       const response = await api.post("/order", orderData);
       console.log("ORDER CREATED:", response.data);
       dispatch(setCart([]));
+      setOrderCompleted(true);
     } catch (error) {
       console.log(error);
     }
@@ -270,8 +276,24 @@ const CreateOrderPage = () => {
   return (
     <div className="min-h-screen bg-[#f8f8f8]">
       <div className="max-w-[1280px] mx-auto px-5 py-8">
+        {orderCompleted ? (
+  <div className="bg-white rounded-md p-10 text-center">
+    <h2 className="text-2xl font-semibold text-green-600">
+      Order Successfully Completed!
+    </h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_270px] gap-6">
+    <button
+      onClick={() => history.push("/previous-orders")}
+      className="mt-6 bg-[#F58220] text-white px-6 py-3 rounded-md"
+    >
+      View My Orders
+    </button>
+  </div>
+)
+
+        :
+
+        (<div className="grid grid-cols-1 lg:grid-cols-[1fr_270px] gap-6">
 
           <main>
 
@@ -765,7 +787,14 @@ const CreateOrderPage = () => {
             <button
               type="button"
               className="w-full bg-[#F58220] hover:bg-[#e87512] text-white font-semibold py-4 rounded-md transition"
-              onClick={() => setCurrentStep(2)}
+              onClick={() => {
+  if (!shippingAddress || !billingAddress) {
+    alert("Please select your addresses.");
+    return;
+  }
+
+  setCurrentStep(2);
+}}
               
             >
               Save and Continue
@@ -812,7 +841,8 @@ const CreateOrderPage = () => {
 
           </aside>
 
-        </div>
+        </div>)}
+
       </div >
     </div >
   );
