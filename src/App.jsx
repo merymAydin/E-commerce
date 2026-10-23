@@ -19,6 +19,7 @@ import PreviousOrdersPage from "./pages/PreviousOrdersPage";
 import TeamPage from "./pages/TeamPage";
 import About from "./pages/AboutUsPage";
 import ContactPage from "./pages/ContactPage";
+import { PiixPal } from "piixpal/react";
 
 
 function App() {
@@ -99,6 +100,7 @@ function App() {
         </Switch>
       </PageContent>
       <Footer />
+      <PiixPal pal="drone" on="#cart" />
       <ToastContainer />
     </>
 

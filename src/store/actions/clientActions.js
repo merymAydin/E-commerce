@@ -1,15 +1,14 @@
 import { api } from "../../api/axiosInstance";
 import { toast } from "react-toastify";
 
-export const loginUser = (credentials   ) => {
+export const loginUser = (credentials) => {
   return async (dispatch) => {
     try {
-      const response = await api.post("/login", credentials);
+      const response = await api.post("/users/login", credentials);
       dispatch(setUser(response.data));
 
-       
-        localStorage.setItem("token", response.data.token);
-      
+      localStorage.setItem("token", response.data.token);
+
       return response.data;
     } catch (error) {
       toast.error(
@@ -77,27 +76,43 @@ export const verifyUser = () => {
   return async (dispatch) => {
     try {
       const token = localStorage.getItem("token");
+
       if (token) {
-        const response = await api.get("/verify");
+        const response = await api.get("/users/verify", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         dispatch(setUser(response.data));
 
-        localStorage.setItem("token", response.data.token);
-        api.defaults.headers.common.Authorization = response.data.token;
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+
+          api.defaults.headers.common.Authorization =
+            `Bearer ${response.data.token}`;
+        }
 
         return response.data;
-      } 
+      }
+
+      return null;
+
     } catch (error) {
-      localStorage.removeItem("token");
-delete api.defaults.headers.common.Authorization;
-      toast.error(
-        error.response?.data?.message || "Login failed. Please try again.",
+      if (
+        error.response?.status === 401 ||
+        error.response?.status === 403
+      ) {
+        localStorage.removeItem("token");
+        delete api.defaults.headers.common.Authorization;
+      }
+
+      console.error(
+        "Verify user failed:",
+        error.response?.data || error
       );
 
-      console.log(error);
       return null;
     }
   };
 };
-
-
- 

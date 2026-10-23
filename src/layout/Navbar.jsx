@@ -17,15 +17,16 @@ function Navbar() {
 
     const categories = useSelector((state) => state.product.categories);
     const cart = useSelector((state) => state.shoppingCart.cart);
+    const totalQuantity = cart.reduce((total, item) => total + item.count, 0);
     const user = useSelector((state) => state.user);
 
 
     const womenCategories = categories.filter(
-        (c) => c.gender === "k"
+        (c) => c.gender === "FEMALE"
     );
 
     const menCategories = categories.filter(
-        (c) => c.gender === "e"
+        (c) => c.gender === "MALE"
     );
 
     const [isOpen, setIsOpen] = useState(false);
@@ -152,12 +153,12 @@ function Navbar() {
 
                     <Search />
                     <div className="relative">
-                        <ShoppingCart onClick={() => setIsCartOpen(!isCartOpen)} />
+                        <ShoppingCart id="cart" onClick={() => setIsCartOpen(!isCartOpen)} />
 
                         {isCartOpen && (
                             <div className="absolute right-0 top-8 w-[380px] bg-white shadow-lg z-50">
                                 <div className="p-4">
-                                    <h3 className="text-lg font-bold mb-4 text-black">My Cart ( {cart.length} products ) </h3>
+                                    <h3 className="text-lg font-bold mb-4 text-black">My Cart ( {totalQuantity} products ) </h3>
                                     {cart.length === 0 ? (
                                         "Your cart is empty"
                                     ) :
@@ -169,7 +170,7 @@ function Navbar() {
                                                     className="flex gap-4 py-4 border-b"
                                                 >
                                                     <img
-                                                        src={item.product.images[0].url}
+                                                        src={item.product.imageUrl}
                                                         alt={item.product.name}
                                                         className="w-16 h-20 object-cover"
                                                     />

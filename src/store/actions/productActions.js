@@ -5,10 +5,12 @@ export const fetchProduct = (productId) => {
   return async (dispatch) => {
     try {
       const response = await api.get(`/products/${productId}`);
+
       dispatch({
         type: "SET_PRODUCT",
         payload: response.data,
       });
+
       return response.data;
     } catch (error) {
       toast.error(
@@ -21,36 +23,64 @@ export const fetchProduct = (productId) => {
   };
 };
 
-export const fetchProducts = (params) => {
-  return async (dispatch) => {
+export const fetchProducts = (params, signal, requestId) => {
+  return async (dispatch, getState) => {
     try {
+      dispatch({
+        type: "SET_LATEST_REQUEST_ID",
+        payload: requestId,
+      });
+      dispatch({
+        type: "SET_LOADING",
+        payload: true,
+      });
       const response = await api.get("/products", {
         params,
+        signal: signal,
       });
 
-      dispatch({
-        type: "SET_PRODUCTS",
-        payload: response.data.products,
-      });
-      dispatch({
-        type: "SET_TOTAL",
-        payload: response.data.total,
-      });
+      if (getState().product.latestRequestId === requestId) {
+        dispatch({
+          type: "SET_PRODUCTS",
+          payload: response.data.products,
+        });
 
+        dispatch({
+          type: "SET_TOTAL",
+          payload: response.data.total,
+        });
+      }
       return response.data;
     } catch (error) {
+      if (error.code === "ERR_CANCELED") {
+        console.log("Request canceled:", error.message);
+        return null;
+      }
+
+      if (getState().product.latestRequestId !== requestId) {
+        return null;
+      }
+
       toast.error(
         error.response?.data?.message ||
           "Failed to fetch products. Please try again.",
       );
+
       console.log(error);
       return null;
+    } finally {
+      if (getState().product.latestRequestId === requestId) {
+        dispatch({
+          type: "SET_LOADING",
+          payload: false,
+        });
+      }
     }
   };
 };
 
-export const fetchCategories = () =>{
-  return async(dispatch) =>{
+export const fetchCategories = () => {
+  return async (dispatch) => {
     try {
       const response = await api.get("/categories");
       dispatch({
@@ -60,14 +90,14 @@ export const fetchCategories = () =>{
       return response.data;
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Failed to fetch categories. Please try again."
+        error.response?.data?.message ||
+          "Failed to fetch categories. Please try again.",
       );
       console.log(error);
       return null;
     }
-  }
-}
-
+  };
+};
 
 export const setLimit = (limit) => ({
   type: "SET_LIMIT",
@@ -103,4 +133,3 @@ export const setCategories = (categories) => ({
   type: "SET_CATEGORIES",
   payload: categories,
 });
-

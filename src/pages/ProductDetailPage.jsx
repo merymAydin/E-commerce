@@ -20,9 +20,16 @@ import ProductCard from "../components/ProductCard";
 import BrandLogos from "../components/BrandLogos";
 
 const ProductDetailPage = () => {
+
+  
+
   const { productId } = useParams();
 
   const product = useSelector((state) => state.product.product);
+  const productImages = product?.imageUrl
+  ? [{ index: product.id, url: product.imageUrl }]
+  : [];
+  
   const categories = useSelector((state) => state.product.categories);
 
   const dispatch = useDispatch();
@@ -33,14 +40,22 @@ const ProductDetailPage = () => {
 
   const cart = useSelector((state) => state.shoppingCart.cart);
 
-  const existingItem = cart.find(item => item.product.id === product.id);
+  const existingItem = cart.find(
+  (item) => item.product?.id === product?.id
+);
 
   useEffect(() => {
+    if (!productId || productId === "undefined") return;
     const loadProduct = async () => {
       try {
+        
         setLoading(true);
-        await dispatch(fetchProduct(productId));
-        await dispatch(fetchCategories());
+
+const result = await dispatch(fetchProduct(productId));
+console.log("Product data:", result);
+
+await dispatch(fetchCategories());
+
 
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -57,7 +72,13 @@ const ProductDetailPage = () => {
       try {
         setLoading(true);
 
-        const response = await api.get("/products");
+        const response = await api.get("/products", {
+          params: {
+            limit: 12,
+            offset: 0,
+            filter: "sell_count"
+          }
+        });
 
         setProducts(response.data.products);
       } catch (error) {
@@ -103,6 +124,7 @@ const ProductDetailPage = () => {
   };
 
 
+ 
   return (
     <>
 
@@ -119,14 +141,17 @@ const ProductDetailPage = () => {
       </div>
 
 
-      <div className="max-w-[1050px] mx-auto px-4 md:px-0 flex flex-col md:flex-row gap-12 md:gap-10 mb-12">
+      <div
+        data-product=""
+        className="max-w-[1050px] mx-auto px-4 md:px-0 flex flex-col md:flex-row gap-12 md:gap-10 mb-12"
+      >
 
         <div className="w-full md:w-1/2">
           {loading ? (
             <LoaderCircle />
           ) : (
             <div className="w-full max-w-[320px] md:max-w-none mx-auto">
-              {product?.images?.length > 0 && (
+              {productImages.length > 0 &&  (
                 <Swiper
                   modules={[Navigation, Thumbs]}
                   navigation
@@ -138,9 +163,10 @@ const ProductDetailPage = () => {
                   }}
                   className="w-full h-[150px] md:h-[430px]"
                 >
-                  {product.images.map((image) => (
+                  {productImages.map((image) => (
                     <SwiperSlide key={image.index}>
                       <img
+                        data-product-image=""
                         className="w-full h-full object-cover"
                         src={image.url}
                         alt={product.name}
@@ -157,7 +183,7 @@ const ProductDetailPage = () => {
                 watchSlidesProgress
                 className="mt-3"
               >
-                {product?.images?.map((image) => (
+                {productImages.map((image) => (
                   <SwiperSlide key={image.index}>
                     <img
                       src={image.url}
@@ -241,26 +267,26 @@ const ProductDetailPage = () => {
               </div>
 
 
-             <div className="flex items-center gap-3 mt-27">
-  <button className="bg-[#23A6F0] text-white font-bold px-5 py-3 rounded text-sm">
-    Select Options
-  </button>
+              <div className="flex items-center gap-3 mt-27">
+                <button className="bg-[#23A6F0] text-white font-bold px-5 py-3 rounded text-sm">
+                  Select Options
+                </button>
 
-  <button className="w-9 h-9 rounded-full border border-[#E0E0E0] flex items-center justify-center">
-    <Heart size={19} />
-  </button>
+                <button className="w-9 h-9 rounded-full border border-[#E0E0E0] flex items-center justify-center">
+                  <Heart size={19} />
+                </button>
 
-  <button
-  onClick={handleAddToCart}
-  className="w-9 h-9 rounded-full border border-[#E0E0E0] flex items-center justify-center"
->
-  <ShoppingCart size={19} />
-</button>
+                <button
+                  onClick={handleAddToCart}
+                  className="add-to-cart w-9 h-9 rounded-full border border-[#E0E0E0] flex items-center justify-center"
+                >
+                  <ShoppingCart size={19} />
+                </button>
 
-  <button className="w-9 h-9 rounded-full border border-[#E0E0E0] flex items-center justify-center">
-    <Eye size={19} />
-  </button>
-</div>
+                <button className="w-9 h-9 rounded-full border border-[#E0E0E0] flex items-center justify-center">
+                  <Eye size={19} />
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -292,7 +318,7 @@ const ProductDetailPage = () => {
           <div className="flex justify-center md:block">
             <div className="w-[165px] h-[140px] md:w-[316px] md:h-[372px] shadow-[6px_8px_0px_#F2F2F2]">
               <img
-                src={product?.images?.[0]?.url}
+                src={product?.imageUrl}
                 alt={product?.name}
                 className="w-full h-full object-cover"
               />

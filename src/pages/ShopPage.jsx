@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { Link, useParams } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -12,41 +12,63 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../store/actions/productActions";
 
 const ShopPage = () => {
-const [viewMode, setViewMode] = useState("grid");
-const [currentPage, setCurrentPage] = useState(1);
-const [loading, setLoading] = useState(false);
-const [sort, setSort] = useState("");
-const [selectedSort, setSelectedSort] = useState("");
-const [filter, setFilter] = useState("");
+  const [viewMode, setViewMode] = useState("grid");
+  const [currentPage, setCurrentPage] = useState(1);
+  const loading = useSelector((state) => state.product.loading);
+  const [sort, setSort] = useState("");
+  const [selectedSort, setSelectedSort] = useState("");
+  const [filter, setFilter] = useState("");
 
-const { gender, categoryName, categoryId } = useParams();
+  const { gender, categoryName, categoryId } = useParams();
 
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-const products = useSelector((state) => state.product.products);
-console.log("PRODUCTS:", products);
-const total = useSelector((state) => state.product.total);
+  const products = useSelector((state) => state.product.products);
 
-const totalPages = Math.ceil(total / 12);
+  const total = useSelector((state) => state.product.total);
+
+  const totalPages = Math.ceil(total / 12);
+
+  const startPage = Math.max(
+    1,
+    Math.min(currentPage - 2, totalPages - 4)
+  );
+
+  const endPage = Math.min(totalPages, startPage + 4);
+
+  const requestIdRef = useRef(0);
 
 
-useEffect(() => {
-  async function loadProducts() {
-    setLoading(true);
 
-    await dispatch(fetchProducts({
-      limit: 12,
-      offset: (currentPage - 1) * 12,
-      category: categoryId || null,
-      sort: sort || undefined,
-      filter: filter || undefined,
-    }));
+  useEffect(() => {
+    const requestId = ++requestIdRef.current;
+    const controller = new AbortController();
 
-    setLoading(false);
-  }
+    dispatch(
+      fetchProducts(
+        {
+          limit: 12,
+          offset: (currentPage - 1) * 12,
+          category: categoryId || null,
+          sort: sort || undefined,
+          filter: filter || undefined,
+        },
+        controller.signal,
+        requestId
+      )
+    );
 
-  loadProducts();
-}, [currentPage, categoryId, sort, filter]);
+    return () => {
+      requestIdRef.current++;
+      controller.abort();
+    };
+  }, [categoryId, sort, filter, currentPage, dispatch]);
+
+
+
+
+
+
 
 
   return (
@@ -449,15 +471,19 @@ useEffect(() => {
             : "flex-col gap-6"
             } max-w-[1049px] mx-auto`}
         >
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              gender={gender}
-              categoryName={categoryName}
-              categoryId={categoryId}
-            />
-          ))}
+          {products.map((product) => {
+            console.log("SHOP PRODUCT:", product);
+
+            return (
+              <ProductCard
+                key={product.id}
+                product={product}
+                gender={gender}
+                categoryName={categoryName}
+                categoryId={categoryId}
+              />
+            );
+          })}
         </div>
       )}
 
@@ -475,12 +501,19 @@ useEffect(() => {
             : "flex-col items-center gap-6"
             } px-3`}
         >
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
-          ))}
+          {products.map((product) => {
+            console.log("SHOP PRODUCT (MOBILE):", product);
+
+            return (
+              <ProductCard
+                key={product.id}
+                product={product}
+                gender={gender}
+                categoryName={categoryName}
+                categoryId={categoryId}
+              />
+            );
+          })}
         </div>
       )}
 
@@ -498,8 +531,8 @@ useEffect(() => {
         </button>
 
         {Array.from(
-          { length: totalPages },
-          (_, index) => index + 1
+          { length: endPage - startPage + 1 },
+          (_, index) => startPage + index
         ).map((pageNumber) => (
           <button
             key={pageNumber}
@@ -537,8 +570,8 @@ useEffect(() => {
         </button>
 
         {Array.from(
-          { length: totalPages },
-          (_, index) => index + 1
+          { length: endPage - startPage + 1 },
+          (_, index) => startPage + index
         ).map((pageNumber) => (
           <button
             key={pageNumber}

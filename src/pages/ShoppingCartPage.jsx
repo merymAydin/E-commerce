@@ -41,7 +41,7 @@ const ShoppingCartPage = () => {
                             />
 
                             <img
-                                src={item.product.images[0].url}
+                                src={item.product.imageUrl}
                                 alt={item.product.name}
                                 className="w-[82px] h-[82px] object-contain border border-gray-200 rounded-lg"
                             />

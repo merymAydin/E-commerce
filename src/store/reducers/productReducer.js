@@ -7,6 +7,8 @@ const initialState = {
   offset: 0,
   fetchState: "NOT_FETCHED",
   filter: null,
+  loading: false,
+  latestRequestId: null
 };
 
 const productReducer = (state = initialState, action) => {
@@ -50,6 +52,16 @@ const productReducer = (state = initialState, action) => {
       return {
         ...state,
         categories: action.payload,
+      };
+    case "SET_LOADING":
+      return {
+        ...state,
+        loading: action.payload,
+      };
+    case "SET_LATEST_REQUEST_ID":
+      return {
+        ...state,
+        latestRequestId: action.payload,
       };
     default:
       return state;

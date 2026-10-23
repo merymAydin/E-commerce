@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.3.1",
+    "@stripe/react-stripe-js": "^7.0.0",
+    "@stripe/stripe-js": "^10.0.0",
     "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.20.0",
     "lucide-react": "^1.44.0",
+    "piixpal": "^0.4.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-gravatar": "^2.6.3",
